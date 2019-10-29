@@ -1,39 +1,73 @@
 package com.geekbrains.android_1.hw3_1.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.geekbrains.android_1.hw3_1.data.entity.Note
+import java.util.*
 
 object NotesRepository {
 
-    val notes = listOf(
+    private val notesLiveData = MutableLiveData<List<Note>>()
+
+    private val notes = mutableListOf(
             Note(
+                    UUID.randomUUID().toString(),
                     "Первая заметка",
                     "Текст первой заметки. Не очень длинный, но очень интересный",
-                    0xfff06292.toInt()
+                    color = Note.Color.WHITE
             ),
             Note(
+                    UUID.randomUUID().toString(),
                     "Вторая заметка",
                     "Текст второй заметки. Не очень длинный, но очень интересный",
-                    0xff9575cd.toInt()
+                    color = Note.Color.YELLOW
             ),
             Note(
+                    UUID.randomUUID().toString(),
                     "Третья заметка",
                     "Текст третьей заметки. Не очень длинный, но очень интересный",
-                    0xff64b5f6.toInt()
+                    color = Note.Color.GREEN
             ),
             Note(
+                    UUID.randomUUID().toString(),
                     "Четвертая заметка",
                     "Текст четвертой заметки. Не очень длинный, но очень интересный",
-                    0xff4db6ac.toInt()
+                    color = Note.Color.BLUE
             ),
             Note(
+                    UUID.randomUUID().toString(),
                     "Пятая заметка",
                     "Текст пятой заметки. Не очень длинный, но очень интересный",
-                    0xffb2ff59.toInt()
+                    color = Note.Color.RED
             ),
             Note(
+                    UUID.randomUUID().toString(),
                     "Шестая заметка",
                     "Текст шестой заметки. Не очень длинный, но очень интересный",
-                    0xffffeb3b.toInt()
+                    color = Note.Color.VIOLET
             )
     )
+
+    init {
+        notesLiveData.value = notes
+    }
+
+    fun getNotes(): LiveData<List<Note>> {
+        return notesLiveData
+    }
+
+    fun saveNote(note: Note) {
+        addOrReplace(note)
+        notesLiveData.value = notes
+    }
+
+    private fun addOrReplace(note: Note) {
+        for (i in notes.indices) {
+            if (notes[i] == note){
+                notes[i] = note
+                return
+            }
+        }
+        notes.add(note)
+    }
 }
