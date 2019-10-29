@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">HW3_1</string>
+
+    <string name="first_note_name">Первая заметка</string>
+    <string name="first_note_text">Текст первой заметки. Не очень длинный, но очень интересный</string>
+    <string name="second_note_name">Вторая заметка</string>
+    <string name="second_note_text">Текст второй заметки. Не очень длинный, но очень интересный</string>
+    <string name="third_note_name">Третья заметка</string>
+    <string name="third_note_text">Текст третьей заметки. Не очень длинный, но очень интересный</string>
+    <string name="fourth_note_name">Четвертая заметка</string>
+    <string name="fourth_note_text">Текст четвертой заметки. Не очень длинный, но очень интересный</string>
+    <string name="fifth_note_name">Пятая заметка</string>
+    <string name="fifth_note_text">Текст пятой заметки. Не очень длинный, но очень интересный</string>
+    <string name="sixth_note_name">Шестая заметка</string>
+    <string name="sixth_note_text">Текст шестой заметки. Не очень длинный, но очень интересный</string>
+
+</resources>
