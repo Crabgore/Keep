@@ -13,5 +13,6 @@
     <string name="fifth_note_text">Текст пятой заметки. Не очень длинный, но очень интересный</string>
     <string name="sixth_note_name">Шестая заметка</string>
     <string name="sixth_note_text">Текст шестой заметки. Не очень длинный, но очень интересный</string>
+    <string name="new_note">Новая заметка</string>
 
 </resources>
