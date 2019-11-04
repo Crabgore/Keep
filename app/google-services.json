@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "770328514150",
+    "firebase_url": "https://keep-4a41e.firebaseio.com",
+    "project_id": "keep-4a41e",
+    "storage_bucket": "keep-4a41e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770328514150:android:776e17f3208996f3b027a7",
+        "android_client_info": {
+          "package_name": "com.geekbrains.android_1.hw3_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770328514150-d74vkq9kgduo1frdt0ou2688uuc7i42f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkg1VK70UZu18LNlI1bgb9nkKpXR9D0xs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770328514150-d74vkq9kgduo1frdt0ou2688uuc7i42f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
