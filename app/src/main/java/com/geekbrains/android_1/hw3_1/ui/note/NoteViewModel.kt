@@ -16,6 +16,10 @@ class NoteViewModel: BaseViewModel<Note?, NoteViewState>() {
         pendingNote = note
     }
 
+    fun delete(note: Note) {
+        NotesRepository.deleteNote(note)
+    }
+
     override fun onCleared() {
         pendingNote?.let {
             NotesRepository.saveNote(it)

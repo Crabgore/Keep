@@ -9,5 +9,7 @@ object NotesRepository {
 
     fun getNotes() = remoteProvider.subscribeToAllNotes()
     fun saveNote(note: Note) = remoteProvider.saveNote(note)
+    fun deleteNote(note: Note) = remoteProvider.deleteNote(note)
     fun getNoteById(id: String) = remoteProvider.getNoteById(id)
+    fun getCurrentUser() = remoteProvider.getCurrentUser()
 }

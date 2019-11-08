@@ -5,13 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProviders
 import com.geekbrains.android_1.hw3_1.R
+import com.geekbrains.android_1.hw3_1.common.format
+import com.geekbrains.android_1.hw3_1.common.getColorInt
 import com.geekbrains.android_1.hw3_1.data.entity.Note
 import com.geekbrains.android_1.hw3_1.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_note.*
-import java.text.SimpleDateFormat
 import java.util.*
 
 @Suppress("DEPRECATION")
@@ -64,19 +67,10 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         et_title.removeTextChangedListener(textChangeListener)
         et_body.removeTextChangedListener(textChangeListener)
 
-        if (note != null) {
-            et_title.setText(note?.title ?: "")
-            et_body.setText(note?.text ?: "")
-            val color = when(note!!.color) {
-                Note.Color.WHITE -> R.color.white
-                Note.Color.YELLOW -> R.color.yellow
-                Note.Color.GREEN -> R.color.green
-                Note.Color.BLUE -> R.color.blue
-                Note.Color.RED -> R.color.red
-                Note.Color.VIOLET -> R.color.violet
-            }
-
-            toolbar.setBackgroundColor(resources.getColor(color))
+        note?.let { note ->
+            et_title.setText(note.title)
+            et_body.setText(note.text)
+            toolbar.setBackgroundColor(note.color.getColorInt(this))
         }
 
         et_title.addTextChangedListener(textChangeListener)
@@ -95,23 +89,31 @@ class NoteActivity : BaseActivity<Note?, NoteViewState>() {
         note?.let { viewModel.save(it) }
     }
 
+    private fun deleteNote() {
+        note?.let { viewModel.delete(it) }
+        finish()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu) = MenuInflater(this).inflate(R.menu.note_menu, menu).let { true }
+
     override fun onOptionsItemSelected(item: MenuItem) = when(item.itemId) {
         android.R.id.home -> {
             onBackPressed()
             true
         }
+        R.id.delete -> deleteNote().let { true }
         else -> super.onOptionsItemSelected(item)
     }
 
     override fun renderData(data: Note?) {
         this.note = data
 
-        supportActionBar?.title = if (note != null) {
-            SimpleDateFormat(DATE_TIME_FORMAT, Locale.getDefault()).format(note!!.lastChanged)
-        } else {
-            getString(R.string.new_note)
-        }
+        supportActionBar?.title = note?.run {
+            lastChanged.format(DATE_TIME_FORMAT)
+        } ?: getString(R.string.new_note)
 
         initView()
     }
+
+
 }
