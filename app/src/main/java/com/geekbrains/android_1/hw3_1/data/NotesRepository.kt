@@ -1,39 +1,15 @@
 package com.geekbrains.android_1.hw3_1.data
 
 import com.geekbrains.android_1.hw3_1.data.entity.Note
+import com.geekbrains.android_1.hw3_1.data.provider.FireStoreProvider
+import com.geekbrains.android_1.hw3_1.data.provider.RemoteDataProvider
 
 object NotesRepository {
+    private val remoteProvider: RemoteDataProvider = FireStoreProvider()
 
-    val notes = listOf(
-            Note(
-                    "Первая заметка",
-                    "Текст первой заметки. Не очень длинный, но очень интересный",
-                    0xfff06292.toInt()
-            ),
-            Note(
-                    "Вторая заметка",
-                    "Текст второй заметки. Не очень длинный, но очень интересный",
-                    0xff9575cd.toInt()
-            ),
-            Note(
-                    "Третья заметка",
-                    "Текст третьей заметки. Не очень длинный, но очень интересный",
-                    0xff64b5f6.toInt()
-            ),
-            Note(
-                    "Четвертая заметка",
-                    "Текст четвертой заметки. Не очень длинный, но очень интересный",
-                    0xff4db6ac.toInt()
-            ),
-            Note(
-                    "Пятая заметка",
-                    "Текст пятой заметки. Не очень длинный, но очень интересный",
-                    0xffb2ff59.toInt()
-            ),
-            Note(
-                    "Шестая заметка",
-                    "Текст шестой заметки. Не очень длинный, но очень интересный",
-                    0xffffeb3b.toInt()
-            )
-    )
+    fun getNotes() = remoteProvider.subscribeToAllNotes()
+    fun saveNote(note: Note) = remoteProvider.saveNote(note)
+    fun deleteNote(note: Note) = remoteProvider.deleteNote(note)
+    fun getNoteById(id: String) = remoteProvider.getNoteById(id)
+    fun getCurrentUser() = remoteProvider.getCurrentUser()
 }
