@@ -10,15 +10,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QueryDocumentSnapshot
 
-class FireStoreProvider: RemoteDataProvider {
+class FireStoreProvider(private val fireBaseAuth: FirebaseAuth, private val store: FirebaseFirestore) : RemoteDataProvider {
+
     companion object {
         private const val NOTES_COLLECTION = "notes"
         private const val USERS_COLLECTION = "users"
     }
 
-    private val store by lazy { FirebaseFirestore.getInstance() }
     private val currentUser
-        get() = FirebaseAuth.getInstance().currentUser
+        get() = fireBaseAuth.currentUser
 
     override fun getCurrentUser() = MutableLiveData<User?>().apply {
         value = currentUser?.let {
@@ -29,6 +29,7 @@ class FireStoreProvider: RemoteDataProvider {
     private fun getUserNotesCollection() = currentUser?.let {
         store.collection(USERS_COLLECTION).document(it.uid).collection(NOTES_COLLECTION)
     } ?: throw NoAuthException()
+
 
     override fun subscribeToAllNotes() = MutableLiveData<NoteResult>().apply {
         try {
@@ -59,6 +60,7 @@ class FireStoreProvider: RemoteDataProvider {
         } catch (e: Throwable) {
             value = NoteResult.Error(e)
         }
+
     }
 
     override fun saveNote(note: Note) = MutableLiveData<NoteResult>().apply {
@@ -77,7 +79,19 @@ class FireStoreProvider: RemoteDataProvider {
         }
     }
 
-    override fun deleteNote(note: Note) {
-        getUserNotesCollection().document(note.id).delete()
+    override fun deleteNote(noteId: String) = MutableLiveData<NoteResult>().apply {
+        try {
+            getUserNotesCollection().document(noteId)
+                    .delete()
+                    .addOnSuccessListener {
+                        value = NoteResult.Success(null)
+                    }.addOnFailureListener {
+                        value = NoteResult.Error(it)
+                    }
+        } catch (e: Throwable) {
+            value = NoteResult.Error(e)
+        }
     }
+
+
 }

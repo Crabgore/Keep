@@ -6,7 +6,8 @@ import com.geekbrains.android_1.hw3_1.data.entity.Note
 import com.geekbrains.android_1.hw3_1.data.model.NoteResult
 import com.geekbrains.android_1.hw3_1.ui.base.BaseViewModel
 
-class MainViewModel : BaseViewModel<List<Note>?, MainViewState>() {
+class MainViewModel(notesRepository: NotesRepository) : BaseViewModel<List<Note>?, MainViewState>() {
+
     private val noteObserver = Observer<NoteResult> {
         it ?: return@Observer
 
@@ -20,7 +21,7 @@ class MainViewModel : BaseViewModel<List<Note>?, MainViewState>() {
         }
     }
 
-    private val repositoryNotes = NotesRepository.getNotes()
+    private val repositoryNotes = notesRepository.getNotes()
 
     init {
         viewStateLiveData.value = MainViewState()

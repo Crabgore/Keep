@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.auth.AuthUI
 import com.geekbrains.android_1.hw3_1.R
@@ -16,17 +15,19 @@ import com.geekbrains.android_1.hw3_1.ui.base.BaseActivity
 import com.geekbrains.android_1.hw3_1.ui.note.NoteActivity
 import com.geekbrains.android_1.hw3_1.ui.splash.SplashActivity
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.alert
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.LogoutListener {
+class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
+
     companion object {
         fun start(context: Context) = Intent(context, MainActivity::class.java).run {
             context.startActivity(this)
         }
     }
+
     private lateinit var adapter: NotesAdapter
-    override val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this).get(MainViewModel::class.java)
-    }
+    override val model: MainViewModel by viewModel()
     override val layoutRes: Int = R.layout.activity_main
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,10 +63,15 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.Lo
     }
 
     private fun showLogoutDialog() {
-        supportFragmentManager.findFragmentByTag(LogoutDialog.TAG) ?: LogoutDialog.createInstance().show(supportFragmentManager, LogoutDialog.TAG)
+        alert {
+            titleResource = R.string.logout_dialog_title
+            messageResource = R.string.logout_dialog_message
+            positiveButton(getString(R.string.logout_dialog_ok)) { onLogout() }
+            negativeButton(getString(R.string.logout_dialog_cancel)) { dialog -> dialog.dismiss() }
+        }.show()
     }
 
-    override fun onLogout() {
+    private fun onLogout() {
         AuthUI.getInstance()
                 .signOut(this)
                 .addOnCompleteListener {
@@ -73,4 +79,5 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>(), LogoutDialog.Lo
                     finish()
                 }
     }
+
 }

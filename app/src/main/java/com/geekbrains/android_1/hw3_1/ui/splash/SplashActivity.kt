@@ -1,20 +1,18 @@
 package com.geekbrains.android_1.hw3_1.ui.splash
 
-import androidx.lifecycle.ViewModelProviders
+import org.koin.android.viewmodel.ext.android.viewModel
 import com.geekbrains.android_1.hw3_1.ui.base.BaseActivity
 import com.geekbrains.android_1.hw3_1.ui.main.MainActivity
 
-class SplashActivity: BaseActivity<Boolean?, SplashViewState>() {
+class SplashActivity : BaseActivity<Boolean?, SplashViewState>() {
 
-    override val viewModel by lazy {
-        ViewModelProviders.of(this).get(SplashViewModel::class.java)
-    }
+    override val model: SplashViewModel by viewModel()
 
     override val layoutRes: Int? = null
 
     override fun onResume() {
         super.onResume()
-        viewModel.requestUser()
+        model.requestUser()
     }
 
     override fun renderData(data: Boolean?) {

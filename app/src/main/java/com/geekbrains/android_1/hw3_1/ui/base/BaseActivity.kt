@@ -14,16 +14,23 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
     companion object {
         private const val RC_SIGN_IN = 42
     }
-    abstract val viewModel: BaseViewModel<T, S>
+
+    abstract val model: BaseViewModel<T, S>
     abstract val layoutRes: Int?
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         layoutRes?.let {
             setContentView(it)
         }
-        viewModel.getViewState().observe(this, Observer<S> { it ->
+
+        initUI()
+    }
+
+    private fun initUI() {
+        model.getViewState().observe(this, Observer<S> { it ->
             it ?: return@Observer
             it.error?.let {
                 renderError(it)
@@ -33,6 +40,7 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
             renderData(it.data)
         })
     }
+
 
     private fun renderError(error: Throwable?) = error?.let {
         when (error) {
