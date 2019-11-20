@@ -1,17 +1,30 @@
 package com.geekbrains.android_1.hw3_1.ui.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.annotation.VisibleForTesting
 import com.geekbrains.android_1.hw3_1.data.NotesRepository
+import com.geekbrains.android_1.hw3_1.data.entity.Note
+import com.geekbrains.android_1.hw3_1.data.model.NoteResult
+import com.geekbrains.android_1.hw3_1.ui.base.BaseViewModel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-
-    private val viewStateLiveData: MutableLiveData<MainViewState> = MutableLiveData()
+class MainViewModel(notesRepository: NotesRepository) : BaseViewModel<List<Note>?>() {
+    private val notesChannel = notesRepository.getNotes()
 
     init {
-        viewStateLiveData.value = MainViewState(NotesRepository.notes)
+        launch {
+            notesChannel.consumeEach {
+                when(it){
+                    is NoteResult.Success<*> -> setData(it.data as? List<Note>)
+                    is NoteResult.Error -> setError(it.error)
+                }
+            }
+        }
     }
 
-    fun viewState(): LiveData<MainViewState> = viewStateLiveData
+    @VisibleForTesting
+    public override fun onCleared() {
+        notesChannel.cancel()
+        super.onCleared()
+    }
 }

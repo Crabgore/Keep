@@ -1,39 +1,12 @@
 package com.geekbrains.android_1.hw3_1.data
 
 import com.geekbrains.android_1.hw3_1.data.entity.Note
+import com.geekbrains.android_1.hw3_1.data.provider.RemoteDataProvider
 
-object NotesRepository {
-
-    val notes = listOf(
-            Note(
-                    "Первая заметка",
-                    "Текст первой заметки. Не очень длинный, но очень интересный",
-                    0xfff06292.toInt()
-            ),
-            Note(
-                    "Вторая заметка",
-                    "Текст второй заметки. Не очень длинный, но очень интересный",
-                    0xff9575cd.toInt()
-            ),
-            Note(
-                    "Третья заметка",
-                    "Текст третьей заметки. Не очень длинный, но очень интересный",
-                    0xff64b5f6.toInt()
-            ),
-            Note(
-                    "Четвертая заметка",
-                    "Текст четвертой заметки. Не очень длинный, но очень интересный",
-                    0xff4db6ac.toInt()
-            ),
-            Note(
-                    "Пятая заметка",
-                    "Текст пятой заметки. Не очень длинный, но очень интересный",
-                    0xffb2ff59.toInt()
-            ),
-            Note(
-                    "Шестая заметка",
-                    "Текст шестой заметки. Не очень длинный, но очень интересный",
-                    0xffffeb3b.toInt()
-            )
-    )
+class NotesRepository(private val remoteProvider: RemoteDataProvider) {
+    fun getNotes() = remoteProvider.subscribeToAllNotes()
+    suspend fun saveNote(note: Note) = remoteProvider.saveNote(note)
+    suspend fun getNoteById(id: String) = remoteProvider.getNoteById(id)
+    suspend fun getCurrentUser() = remoteProvider.getCurrentUser()
+    suspend fun deleteNote(noteId: String) = remoteProvider.deleteNote(noteId)
 }
