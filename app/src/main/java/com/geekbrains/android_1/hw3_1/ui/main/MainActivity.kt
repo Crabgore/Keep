@@ -18,15 +18,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.alert
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
-
+class MainActivity : BaseActivity<List<Note>?>() {
     companion object {
         fun start(context: Context) = Intent(context, MainActivity::class.java).run {
             context.startActivity(this)
         }
     }
 
-    private lateinit var adapter: NotesAdapter
+    lateinit var adapter: NotesAdapter
     override val model: MainViewModel by viewModel()
     override val layoutRes: Int = R.layout.activity_main
 
@@ -34,10 +33,6 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
         super.onCreate(savedInstanceState)
         setSupportActionBar(toolbar)
 
-        initUI()
-    }
-
-    private fun initUI() {
         rv_notes.layoutManager = GridLayoutManager(this, 2)
         adapter = NotesAdapter {
             NoteActivity.start(this, it.id)
@@ -79,5 +74,4 @@ class MainActivity : BaseActivity<List<Note>?, MainViewState>() {
                     finish()
                 }
     }
-
 }

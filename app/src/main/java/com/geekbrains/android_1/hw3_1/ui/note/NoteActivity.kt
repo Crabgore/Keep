@@ -18,8 +18,7 @@ import org.jetbrains.anko.alert
 import org.koin.android.viewmodel.ext.android.viewModel
 import java.util.*
 
-class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
-
+class NoteActivity : BaseActivity<NoteData>() {
     companion object {
         private val EXTRA_NOTE = NoteActivity::class.java.name + "extra.NOTE"
         private const val DATE_TIME_FORMAT = "dd.MM.yy HH:mm"
@@ -48,12 +47,6 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        initUI()
-
-        initView()
-    }
-
-    private fun initUI() {
         val noteId = intent.getStringExtra(EXTRA_NOTE)
 
         noteId?.let {
@@ -67,18 +60,19 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
             toolbar.setBackgroundColor(color.getColorInt(this))
             saveNote()
         }
+
+        initView()
+
     }
 
-    override fun renderData(data: NoteViewState.Data) {
+    override fun renderData(data: NoteData) {
         if (data.isDeleted) {
             finish()
             return
         }
 
         this.note = data.note
-
         initView()
-
     }
 
     private fun initView() {
@@ -86,8 +80,13 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
         et_body.removeTextChangedListener(textChangeListener)
 
         note?.let { note ->
-            et_title.setText(note.title)
-            et_body.setText(note.text)
+            if(et_title.text.toString() != note.title){
+                et_title.setText(note.title)
+            }
+            if(et_body.text.toString() != note.text){
+                et_body.setText(note.text)
+            }
+
             toolbar.setBackgroundColor(note.color.getColorInt(this))
             supportActionBar?.title = note.run {
                 lastChanged.format(DATE_TIME_FORMAT)
@@ -102,7 +101,7 @@ class NoteActivity : BaseActivity<NoteViewState.Data, NoteViewState>() {
     }
 
     fun saveNote() {
-        if (et_title.text == null || et_title.text == null) return
+        if (et_title.text == null || et_title.text!!.length < 3) return
 
         note = note?.copy(
                 title = et_title.text.toString(),

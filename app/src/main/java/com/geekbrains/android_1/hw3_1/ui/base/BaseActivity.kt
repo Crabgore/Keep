@@ -2,45 +2,53 @@ package com.geekbrains.android_1.hw3_1.ui.base
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import com.firebase.ui.auth.AuthUI
 import com.geekbrains.android_1.hw3_1.R
 import com.geekbrains.android_1.hw3_1.data.errors.NoAuthException
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.consumeEach
+import kotlin.coroutines.CoroutineContext
 
-abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
+abstract class BaseActivity<S> : AppCompatActivity(), CoroutineScope {
     companion object {
-        private const val RC_SIGN_IN = 42
+        private const val RC_SIGN_IN = 4242
     }
 
-    abstract val model: BaseViewModel<T, S>
+    override val coroutineContext: CoroutineContext by lazy {
+        Dispatchers.Main + Job()
+    }
+
+    abstract val model: BaseViewModel<S>
     abstract val layoutRes: Int?
 
+    private lateinit var dataJob: Job
+    private lateinit var errorJob: Job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         layoutRes?.let {
             setContentView(it)
         }
-
-        initUI()
     }
 
-    private fun initUI() {
-        model.getViewState().observe(this, Observer<S> { it ->
-            it ?: return@Observer
-            it.error?.let {
-                renderError(it)
-                return@Observer
+    override fun onStart() {
+        super.onStart()
+
+        dataJob = launch {
+            model.getViewState().consumeEach {
+                renderData(it)
             }
+        }
 
-            renderData(it.data)
-        })
+        errorJob = launch {
+            model.getErrorChannel().consumeEach {
+                renderError(it)
+            }
+        }
     }
-
 
     private fun renderError(error: Throwable?) = error?.let {
         when (error) {
@@ -49,6 +57,18 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
                 showError(message)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dataJob.cancel()
+        errorJob.cancel()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        coroutineContext.cancel()
     }
 
     private fun startLogin() {
@@ -67,7 +87,7 @@ abstract class BaseActivity<T, S : BaseViewState<T>> : AppCompatActivity() {
         )
     }
 
-    abstract fun renderData(data: T)
+    abstract fun renderData(data: S)
 
     private fun showError(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
